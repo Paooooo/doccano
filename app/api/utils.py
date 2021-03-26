@@ -464,6 +464,16 @@ class FastTextParser(FileParser):
             yield data
 
 
+class PDFParser(FileParser):
+    """
+
+    """
+    def parse(self, file):
+        #file = EncodedIO(file)
+        #file = io.TextIOWrapper(file, encoding=file.encoding)
+            yield [{'text': file.name}]
+
+
 
 class AudioParser(FileParser):
     def parse(self, file):

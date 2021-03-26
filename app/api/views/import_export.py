@@ -13,7 +13,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from ..models import Project
 from ..permissions import IsProjectAdmin
-from ..utils import (AudioParser, CoNLLParser, CSVPainter, CSVParser,
+from ..utils import (PDFParser,AudioParser, CoNLLParser, CSVPainter, CSVParser,
                      ExcelParser, FastTextPainter, FastTextParser,
                      JSONLRenderer, JSONPainter, JSONParser, PlainTextParser,
                      PlainTextRenderer, iterable_to_io)
@@ -69,6 +69,8 @@ class TextUploadAPI(APIView):
             return AudioParser()
         elif file_format == 'fastText':
             return FastTextParser()
+        elif file_format == 'pdf':
+            return PDFParser()
         else:
             raise ValidationError('format {} is invalid.'.format(file_format))
 
