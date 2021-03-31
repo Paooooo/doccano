@@ -203,6 +203,10 @@ class Document(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     annotations_approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
+    docfile = models.FileField(upload_to='app/staticfiles', default="")
+
+
+
     def __str__(self):
         return self.text[:50]
 

@@ -91,7 +91,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
-        fields = ('id', 'text', 'annotations', 'meta', 'annotation_approver', 'comment_count')
+        fields = ('id', 'text', 'annotations', 'meta', 'docfile', 'annotation_approver', 'comment_count')
 
 
 class ApproverSerializer(DocumentSerializer):

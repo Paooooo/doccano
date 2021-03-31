@@ -3,6 +3,9 @@ from django.shortcuts import get_object_or_404, redirect
 from libcloud import DriverType, get_driver
 from libcloud.storage.types import (ContainerDoesNotExistError,
                                     ObjectDoesNotExistError)
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
 from rest_framework import status
 from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.parsers import MultiPartParser
@@ -11,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_csv.renderers import CSVRenderer
 
-from ..models import Project
+from ..models import Project, Document
 from ..permissions import IsProjectAdmin
 from ..utils import (PDFParser,AudioParser, CoNLLParser, CSVPainter, CSVParser,
                      ExcelParser, FastTextPainter, FastTextParser,
@@ -41,17 +44,23 @@ class TextUploadAPI(APIView):
             file=request.data['file'],
             file_format=request.data['format'],
             project_id=kwargs['project_id'],
+            docfile=request.data['file']
         )
 
         return Response(status=status.HTTP_201_CREATED)
 
     @classmethod
-    def save_file(cls, user, file, file_format, project_id):
+    def save_file(cls, user, file, file_format, project_id, docfile):
         project = get_object_or_404(Project, pk=project_id)
         parser = cls.select_parser(file_format)
         data = parser.parse(file)
         storage = project.get_storage(data)
         storage.save(user)
+        if file_format == 'pdf':
+            doc = Document(docfile = file, project_id=project_id, text=file.name)
+            doc.save()
+
+
 
     @classmethod
     def select_parser(cls, file_format):

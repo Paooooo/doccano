@@ -16,6 +16,8 @@ from django.db import transaction
 from rest_framework.renderers import BaseRenderer, JSONRenderer
 from seqeval.metrics.sequence_labeling import get_entities
 
+from PyPDF2 import PdfFileReader
+
 from .exceptions import FileParseException
 from .models import Label
 from .serializers import DocumentSerializer, LabelSerializer
@@ -470,8 +472,14 @@ class PDFParser(FileParser):
     """
     def parse(self, file):
         #file = EncodedIO(file)
-        #file = io.TextIOWrapper(file, encoding=file.encoding)
-            yield [{'text': file.name}]
+        #pdf_reader = PdfFileReader(file)
+        #page = pdf_reader.getPage(0)
+        #data = page.extractText()
+        #meta = str(pdf_reader.getDocumentInfo())
+        yield [{
+            'text': file.name,
+            'meta': json.dumps({'filename': file.name})
+        }]
 
 
 

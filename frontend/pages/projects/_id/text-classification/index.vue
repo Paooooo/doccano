@@ -55,7 +55,17 @@
         </v-card-title>
         <v-divider />
         <v-card-text class="title highlight" v-text="doc.text" />
+
       </v-card>
+      <v-card>
+
+        <h1 v-if="isPDF"> Viewer Pane  Iframe </h1>
+        <iframe v-if="isPDF" :data="doc.text" type="application/pdf">
+
+        </iframe>
+
+      </v-card>
+
     </template>
     <template v-slot:sidebar>
       <list-metadata :metadata="JSON.parse(doc.meta)" />
@@ -82,6 +92,12 @@ export default {
     ListMetadata,
     ToolbarLaptop,
     ToolbarMobile
+  },
+  props: {
+    url: {
+      type: String,
+      default: '',
+    },
   },
 
   async fetch() {
@@ -123,7 +139,15 @@ export default {
       } else {
         return this.docs.items[0]
       }
-    }
+    },
+    fileExt() {
+      const filename = this.doc.text.split('.')[0]
+      const extension = this.doc.text.split('.')[1]
+      return extension
+    },
+    isPDF() {
+      return this.fileExt === 'pdf'
+      }
   },
 
   watch: {
