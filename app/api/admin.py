@@ -13,7 +13,7 @@ class LabelAdmin(admin.ModelAdmin):
 
 
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ('text', 'project', 'meta', 'docfile')
+    list_display = ('text', 'project', 'meta')
     ordering = ('project',)
     search_fields = ('text',)
 

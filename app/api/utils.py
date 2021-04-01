@@ -478,9 +478,14 @@ class PDFParser(FileParser):
         #meta = str(pdf_reader.getDocumentInfo())
         yield [{
             'text': file.name,
-            'meta': json.dumps({'filename': file.name})
+            'meta': json.dumps({'path': generate_pdf_path(file)})
         }]
 
+
+def generate_pdf_path(pdf_file):
+    file_name = pdf_file.name
+    pdf_path = f'frontend/static/pdf/{file_name}'
+    return pdf_path
 
 
 class AudioParser(FileParser):

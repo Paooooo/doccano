@@ -3,8 +3,6 @@ from django.shortcuts import get_object_or_404, redirect
 from libcloud import DriverType, get_driver
 from libcloud.storage.types import (ContainerDoesNotExistError,
                                     ObjectDoesNotExistError)
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
 
 from rest_framework import status
 from rest_framework.exceptions import ParseError, ValidationError
@@ -19,7 +17,7 @@ from ..permissions import IsProjectAdmin
 from ..utils import (PDFParser,AudioParser, CoNLLParser, CSVPainter, CSVParser,
                      ExcelParser, FastTextPainter, FastTextParser,
                      JSONLRenderer, JSONPainter, JSONParser, PlainTextParser,
-                     PlainTextRenderer, iterable_to_io)
+                     PlainTextRenderer, iterable_to_io, generate_pdf_path)
 
 
 class Features(APIView):
@@ -44,24 +42,26 @@ class TextUploadAPI(APIView):
             file=request.data['file'],
             file_format=request.data['format'],
             project_id=kwargs['project_id'],
-            docfile=request.data['file']
         )
 
         return Response(status=status.HTTP_201_CREATED)
 
     @classmethod
-    def save_file(cls, user, file, file_format, project_id, docfile):
+    def save_file(cls, user, file, file_format, project_id):
         project = get_object_or_404(Project, pk=project_id)
+        parser = cls.select_parser(file_format)
+        data = parser.parse(file)
+        storage = project.get_storage(data)
+        storage.save(user)
         if file_format == 'pdf':
-            doc = Document(docfile=file, project_id=project_id, text=file.name)
-            doc.save()
-        else:
-            parser = cls.select_parser(file_format)
-            data = parser.parse(file)
-            storage = project.get_storage(data)
-            storage.save(user)
+            cls.handle_pdf_uploaded_file(file)
 
 
+    @classmethod
+    def handle_pdf_uploaded_file(cls, pdf_file):
+        with open(generate_pdf_path(pdf_file), 'wb+') as destination:
+            for chunk in pdf_file.chunks():
+                destination.write(chunk)
 
 
     @classmethod

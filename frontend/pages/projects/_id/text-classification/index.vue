@@ -60,7 +60,8 @@
 
         <viewer-pane
             v-if="isPDF"
-            :doc="doc">
+            :doc="doc"
+            :metadata = JSON.parse(doc.meta)>
         </viewer-pane>
 
 
@@ -117,7 +118,6 @@ export default {
       project: {},
       enableAutoLabeling: false,
       labelOption: 0,
-      staticfilesPath: ''
     }
   },
 
