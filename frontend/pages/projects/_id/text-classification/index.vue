@@ -55,15 +55,13 @@
         </v-card-title>
         <v-divider/>
         <v-card-text class="title highlight" v-text="doc.text"/>
- <v-divider/>
-         <viewer-pane
-            v-if="isPDF"
-            :doc="doc">
-        </viewer-pane>
 
       </v-card>
 
-
+        <viewer-pane
+            v-if="isPDF"
+            :doc="doc">
+        </viewer-pane>
 
 
     </template>

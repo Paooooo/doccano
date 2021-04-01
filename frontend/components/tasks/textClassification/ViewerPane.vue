@@ -1,10 +1,7 @@
 <template>
-  <v-card>
-    <v-card-title> Viewer Pane </v-card-title>
     <div class="preview">
     <iframe :src="/pdf/ + doc.text" type="application/pdf"> </iframe>
     </div>
-  </v-card>
 </template>
 
 <script lang="ts">
@@ -21,7 +18,7 @@ export default Vue.extend( {
 </script>
 
 <style scoped>
-.preview {
+.preview, iframe {
 width: 100%;
 height: 100%;
 }
