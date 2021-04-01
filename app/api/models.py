@@ -203,7 +203,7 @@ class Document(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     annotations_approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
-    docfile = models.FileField(upload_to='app/staticfiles', default="")
+    docfile = models.FileField(upload_to='frontend/static/pdf', default="")
 
 
 

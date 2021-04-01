@@ -52,13 +52,15 @@ class TextUploadAPI(APIView):
     @classmethod
     def save_file(cls, user, file, file_format, project_id, docfile):
         project = get_object_or_404(Project, pk=project_id)
-        parser = cls.select_parser(file_format)
-        data = parser.parse(file)
-        storage = project.get_storage(data)
-        storage.save(user)
         if file_format == 'pdf':
-            doc = Document(docfile = file, project_id=project_id, text=file.name)
+            doc = Document(docfile=file, project_id=project_id, text=file.name)
             doc.save()
+        else:
+            parser = cls.select_parser(file_format)
+            data = parser.parse(file)
+            storage = project.get_storage(data)
+            storage.save(user)
+
 
 
 
