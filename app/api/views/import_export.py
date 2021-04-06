@@ -53,12 +53,16 @@ class TextUploadAPI(APIView):
         data = parser.parse(file)
         storage = project.get_storage(data)
         storage.save(user)
+        # if file is pdf, a copy of the file is stored in static folder
         if file_format == 'pdf':
             cls.handle_pdf_uploaded_file(file)
 
 
     @classmethod
     def handle_pdf_uploaded_file(cls, pdf_file):
+        """
+        store pdf file in frontend static folder
+        """
         with open(generate_pdf_path(pdf_file), 'wb+') as destination:
             for chunk in pdf_file.chunks():
                 destination.write(chunk)

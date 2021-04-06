@@ -1,6 +1,6 @@
 <template>
     <div class="preview">
-    <iframe :src="url_path" type="application/pdf"> </iframe>
+    <iframe :src="pdf_path" type="application/pdf"> </iframe>
     </div>
 </template>
 
@@ -20,8 +20,8 @@ export default Vue.extend( {
     }
   },
   computed: {
-    url_path() {
-      const metapath = this.metadata.path
+    pdf_path() {
+      const metapath = this.metadata.file_path
       return metapath.substr(15)
     }
   }

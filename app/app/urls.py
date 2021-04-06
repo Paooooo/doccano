@@ -45,8 +45,7 @@ urlpatterns = [
 ]
 
 # to store pdf files in staticfiles foldes
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATICFILES_DIRS[0], document_root=settings.BASE_DIR)
 
 if 'cloud_browser' in settings.INSTALLED_APPS:
     urlpatterns.append(path('cloud-storage/', include('cloud_browser.urls')))

@@ -16,8 +16,6 @@ from django.db import transaction
 from rest_framework.renderers import BaseRenderer, JSONRenderer
 from seqeval.metrics.sequence_labeling import get_entities
 
-from PyPDF2 import PdfFileReader
-
 from .exceptions import FileParseException
 from .models import Label
 from .serializers import DocumentSerializer, LabelSerializer
@@ -468,23 +466,28 @@ class FastTextParser(FileParser):
 
 class PDFParser(FileParser):
     """
-
+    Parses files in pdf format.
+    Returns the file name as text and file_path as meta
+    example :
+    ```
+    "text" : "sample.pdf",
+    "meta : {"file_path" : "frontend/static/pdf/sample.pdf"}
+    ```
     """
     def parse(self, file):
-        #file = EncodedIO(file)
-        #pdf_reader = PdfFileReader(file)
-        #page = pdf_reader.getPage(0)
-        #data = page.extractText()
-        #meta = str(pdf_reader.getDocumentInfo())
         yield [{
             'text': file.name,
-            'meta': json.dumps({'path': generate_pdf_path(file)})
+            'meta': json.dumps({'file_path': generate_pdf_path(file)})
         }]
 
 
 def generate_pdf_path(pdf_file):
+    """
+    Generate path to store pdf files in frontend static folder.
+    TODO : find more efficient way to do (function is called twice for each pdf upload)
+    """
     file_name = pdf_file.name
-    pdf_path = f'frontend/static/pdf/{file_name}'
+    pdf_path = f'{settings.STATICFILES_DIRS[0]}/{file_name}'
     return pdf_path
 
 
