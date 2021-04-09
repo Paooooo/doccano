@@ -5,7 +5,11 @@
           v-model="panel"
       expand>
         <v-expansion-panel-header>
-          Document preview panel
+          <v-icon>
+            large
+            mdi-file-eye-outline
+          </v-icon>
+          <div>Preview panel</div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <iframe :src="pdf_path" type="application/pdf"></iframe>
