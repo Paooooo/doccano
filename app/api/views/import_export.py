@@ -12,12 +12,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_csv.renderers import CSVRenderer
 
-from ..models import Project, Document
+from ..models import Project
 from ..permissions import IsProjectAdmin
-from ..utils import (PDFParser,AudioParser, CoNLLParser, CSVPainter, CSVParser,
+from ..utils import (PDFParser, AudioParser, CoNLLParser, CSVPainter, CSVParser,
                      ExcelParser, FastTextPainter, FastTextParser,
                      JSONLRenderer, JSONPainter, JSONParser, PlainTextParser,
-                     PlainTextRenderer, iterable_to_io, generate_pdf_path)
+                     PlainTextRenderer, iterable_to_io)
 
 
 class Features(APIView):
@@ -50,20 +50,35 @@ class TextUploadAPI(APIView):
     def save_file(cls, user, file, file_format, project_id):
         project = get_object_or_404(Project, pk=project_id)
         parser = cls.select_parser(file_format)
-        data = parser.parse(file)
+        # store data generator as a list to iterate twice (saving and extracting pdf file path)
+        if file_format == 'pdf':
+            data = list(parser.parse(file))
+        else:
+            data = parser.parse(file)
         storage = project.get_storage(data)
         storage.save(user)
-        # if file is pdf, a copy of the file is stored in static folder
+        # if file is pdf, a copy of the file is stored in frontend static folder
         if file_format == 'pdf':
-            cls.handle_pdf_uploaded_file(file)
+            path = cls.get_pdf_file_path(data)
+            cls.handle_pdf_uploaded_file(file, path)
 
 
     @classmethod
-    def handle_pdf_uploaded_file(cls, pdf_file):
+    def get_pdf_file_path(cls, data):
         """
-        store pdf file in frontend static folder
+        Get pdf file path from data
         """
-        with open(generate_pdf_path(pdf_file), 'wb+') as destination:
+        for d in data:
+            meta = (d[0]['meta'])
+            filepath = meta.split(':')[1].split("\"")[1]
+            return filepath
+
+    @classmethod
+    def handle_pdf_uploaded_file(cls, pdf_file, path):
+        """
+        Store pdf file in frontend static folder
+        """
+        with open(path, 'wb+') as destination:
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
 

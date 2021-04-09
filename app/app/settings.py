@@ -115,7 +115,7 @@ TEMPLATES = [
 STATIC_URL = '/static/'
 STATIC_ROOT = path.join(BASE_DIR, 'staticfiles')
 
-# Static folder for PDF in frontend
+# Static folder for PDF storage in frontend
 STATICFILES_DIRS = ["frontend/static/pdf"]
 
 

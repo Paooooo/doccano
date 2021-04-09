@@ -471,24 +471,24 @@ class PDFParser(FileParser):
     example :
     ```
     "text" : "sample.pdf",
-    "meta : {"file_path" : "frontend/static/pdf/sample.pdf"}
+    "meta" : "{'file_path" : "frontend/static/pdf/sample.pdf"}"
     ```
     """
     def parse(self, file):
         yield [{
             'text': file.name,
-            'meta': json.dumps({'file_path': generate_pdf_path(file)})
+            'meta': json.dumps({'file_path': self.generate_pdf_path(file)})
         }]
 
 
-def generate_pdf_path(pdf_file):
-    """
-    Generate path to store pdf files in frontend static folder.
-    TODO : find more efficient way to do (function is called twice for each pdf upload)
-    """
-    file_name = pdf_file.name
-    pdf_path = f'{settings.STATICFILES_DIRS[0]}/{file_name}'
-    return pdf_path
+    def generate_pdf_path(self, pdf_file):
+        """
+        Generate path to store pdf files in frontend static folder.
+        """
+        file_name = pdf_file.name
+        pdf_path = f'{settings.STATICFILES_DIRS[0]}/{file_name}'
+        return pdf_path
+
 
 
 class AudioParser(FileParser):

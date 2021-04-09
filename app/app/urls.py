@@ -44,7 +44,7 @@ urlpatterns = [
     re_path('', TemplateView.as_view(template_name='index.html')),
 ]
 
-# to store pdf files in staticfiles foldes
+# to store pdf files in staticfiles folder
 urlpatterns += static(settings.STATICFILES_DIRS[0], document_root=settings.BASE_DIR)
 
 if 'cloud_browser' in settings.INSTALLED_APPS:
