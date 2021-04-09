@@ -58,11 +58,12 @@
 
       </v-card>
 
-        <viewer-pane
-            v-if="isPDF"
+      <template v-if="isPDF">
+        <preview-panel
             :doc="doc"
-            :metadata = JSON.parse(doc.meta)>
-        </viewer-pane>
+            :metadata=JSON.parse(doc.meta)>
+        </preview-panel>
+      </template>
 
 
     </template>
@@ -80,7 +81,7 @@ import LayoutText from '@/components/tasks/layout/LayoutText'
 import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
-import ViewerPane from "@/components/tasks/textClassification/ViewerPane";
+import PreviewPanel from "@/components/tasks/textClassification/PreviewPanel";
 
 export default {
   layout: 'workspace',
@@ -92,7 +93,7 @@ export default {
     ListMetadata,
     ToolbarLaptop,
     ToolbarMobile,
-    ViewerPane
+    PreviewPanel
   },
 
   async fetch() {
@@ -136,9 +137,7 @@ export default {
       }
     },
     fileExt() {
-      const filename = this.doc.text.split('.')[0]
-      const extension = this.doc.text.split('.')[1]
-      return extension
+      return this.doc.text.split('.')[1]
     },
     isPDF() {
       return this.fileExt === 'pdf'
