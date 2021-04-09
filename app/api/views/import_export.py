@@ -50,17 +50,20 @@ class TextUploadAPI(APIView):
     def save_file(cls, user, file, file_format, project_id):
         project = get_object_or_404(Project, pk=project_id)
         parser = cls.select_parser(file_format)
-        # store data generator as a list to iterate twice (saving and extracting pdf file path)
+        """
+        if the file is pdf, the parsed data (generator) is stored in a list in order to iterate twice :
+        1. extract file path
+        2. save file
+        The pdf file is also stored in frontend/static/pdf/
+        """
         if file_format == 'pdf':
             data = list(parser.parse(file))
+            path = cls.get_pdf_file_path(data)
+            cls.handle_pdf_uploaded_file(file, path)
         else:
             data = parser.parse(file)
         storage = project.get_storage(data)
         storage.save(user)
-        # if file is pdf, a copy of the file is stored in frontend static folder
-        if file_format == 'pdf':
-            path = cls.get_pdf_file_path(data)
-            cls.handle_pdf_uploaded_file(file, path)
 
 
     @classmethod

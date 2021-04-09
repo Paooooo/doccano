@@ -6,6 +6,7 @@ import json
 import mimetypes
 import re
 from collections import defaultdict
+import uuid
 
 import conllu
 import pyexcel
@@ -485,10 +486,15 @@ class PDFParser(FileParser):
         """
         Generate path to store pdf files in frontend static folder.
         """
-        file_name = pdf_file.name
+        file_name = self.generate_random_file_name()
         pdf_path = f'{settings.STATICFILES_DIRS[0]}/{file_name}'
         return pdf_path
 
+    def generate_random_file_name(self):
+        """
+        generate random file name for pdf files
+        """
+        return uuid.uuid4().hex + '.pdf'
 
 
 class AudioParser(FileParser):
