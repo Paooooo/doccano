@@ -478,7 +478,7 @@ class PDFParser(FileParser):
     def parse(self, file):
         yield [{
             'text': file.name,
-            'meta': json.dumps({'file_path': self.generate_pdf_path(file)})
+            'meta': json.dumps({'file_path': self.generate_pdf_path(file)[-56:]})
         }]
 
 

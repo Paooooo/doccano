@@ -115,8 +115,13 @@ TEMPLATES = [
 STATIC_URL = '/static/'
 STATIC_ROOT = path.join(BASE_DIR, 'staticfiles')
 
+# site root
+SITE_ROOT = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
+
 # Static folder for PDF storage in frontend
-STATICFILES_DIRS = ["frontend/static/pdf"]
+STATICFILES_DIRS = [
+    path.join(SITE_ROOT,'frontend/static/pdf')
+]
 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

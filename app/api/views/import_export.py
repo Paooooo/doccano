@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_csv.renderers import CSVRenderer
 
+from django.conf import settings
 from ..models import Project
 from ..permissions import IsProjectAdmin
 from ..utils import (PDFParser, AudioParser, CoNLLParser, CSVPainter, CSVParser,
@@ -81,7 +82,7 @@ class TextUploadAPI(APIView):
         """
         Store pdf file in frontend static folder
         """
-        with open(path, 'wb+') as destination:
+        with open(f"{settings.SITE_ROOT}/{path}", 'wb+') as destination:
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
 
