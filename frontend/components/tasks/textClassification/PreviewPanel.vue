@@ -1,22 +1,30 @@
 <template>
-  <v-card>
-    <v-expansion-panels v-model="panel">
+    <v-expansion-panels v-model="panel" class="mt-2">
       <v-expansion-panel
           v-model="panel"
-      expand>
+          expand>
         <v-expansion-panel-header>
-          <v-icon>
-            large
-            mdi-file-eye-outline
-          </v-icon>
-          <div>Preview panel</div>
+          <v-row>
+          <v-btn
+              text
+              color="primary"
+          >
+            <v-icon left>
+              mdi-file-eye-outline
+            </v-icon>
+            Preview Panel
+          </v-btn>
+            </v-row>
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <iframe :src="pdf_path" type="application/pdf"></iframe>
+        <v-expansion-panel-content
+        class="preview">
+          <iframe :src="pdf_path" type="application/pdf"
+                  height="100%"
+                  width="100%"
+          ></iframe>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-  </v-card>
 </template>
 
 <script lang="ts">
@@ -38,7 +46,7 @@ export default Vue.extend({
   },
 
   data() {
-    return{
+    return {
       panel: 0
     }
   },
@@ -52,12 +60,10 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-iframe {
-  height: 100%;
-  width: 100%;
-}
 
 .preview {
-  height: 50%;
+  height: 40em;
+
 }
+
 </style>

@@ -58,12 +58,10 @@
 
       </v-card>
 
-      <template v-if="isPDF">
-        <preview-panel
-            :doc="doc"
-            :metadata=JSON.parse(doc.meta)>
-        </preview-panel>
-      </template>
+      <preview-panel v-if="isPDF"
+                     :doc="doc"
+                     :metadata=JSON.parse(doc.meta)>
+      </preview-panel>
 
 
     </template>
