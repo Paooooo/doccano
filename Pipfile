@@ -44,8 +44,7 @@ lockfile = "*"
 gunicorn = "*"
 fasteners = "*"
 auto-labeling-pipeline = "*"
-psycopg2-binary = "*"
-pypdf2 = "*"
+dj-rest-auth = "*"
 
 [requires]
 python_version = "3.8"
