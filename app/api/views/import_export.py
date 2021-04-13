@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect
 from libcloud import DriverType, get_driver
 from libcloud.storage.types import (ContainerDoesNotExistError,
                                     ObjectDoesNotExistError)
+
 from rest_framework import status
 from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.parsers import MultiPartParser
@@ -11,9 +12,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_csv.renderers import CSVRenderer
 
+from django.conf import settings
 from ..models import Project
 from ..permissions import IsProjectAdmin
-from ..utils import (AudioParser, CoNLLParser, CSVPainter, CSVParser,
+from ..utils import (PDFParser, AudioParser, CoNLLParser, CSVPainter, CSVParser,
                      ExcelParser, FastTextPainter, FastTextParser,
                      JSONLRenderer, JSONPainter, JSONParser, PlainTextParser,
                      PlainTextRenderer, iterable_to_io)
@@ -49,9 +51,41 @@ class TextUploadAPI(APIView):
     def save_file(cls, user, file, file_format, project_id):
         project = get_object_or_404(Project, pk=project_id)
         parser = cls.select_parser(file_format)
-        data = parser.parse(file)
+        """
+        if the file is pdf, the parsed data (generator) is stored in a list in order to iterate twice :
+        1. extract file path
+        2. save file
+        The pdf file is also stored in frontend/static/pdf/
+        """
+        if file_format == 'pdf':
+            data = list(parser.parse(file))
+            path = cls.get_pdf_file_path(data)
+            cls.handle_pdf_uploaded_file(file, path)
+        else:
+            data = parser.parse(file)
         storage = project.get_storage(data)
         storage.save(user)
+
+
+    @classmethod
+    def get_pdf_file_path(cls, data):
+        """
+        Get pdf file path from data
+        """
+        for d in data:
+            meta = (d[0]['meta'])
+            filepath = meta.split(':')[1].split("\"")[1]
+            return filepath
+
+    @classmethod
+    def handle_pdf_uploaded_file(cls, pdf_file, path):
+        """
+        Store pdf file in frontend static folder
+        """
+        with open(f"{settings.SITE_ROOT}/{path}", 'wb+') as destination:
+            for chunk in pdf_file.chunks():
+                destination.write(chunk)
+
 
     @classmethod
     def select_parser(cls, file_format):
@@ -69,6 +103,8 @@ class TextUploadAPI(APIView):
             return AudioParser()
         elif file_format == 'fastText':
             return FastTextParser()
+        elif file_format == 'pdf':
+            return PDFParser()
         else:
             raise ValidationError('format {} is invalid.'.format(file_format))
 

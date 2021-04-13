@@ -2,20 +2,20 @@
   <layout-text v-if="doc.id">
     <template v-slot:header>
       <toolbar-laptop
-        :doc-id="doc.id"
-        :enable-auto-labeling.sync="enableAutoLabeling"
-        :guideline-text="project.guideline"
-        :is-reviewd="doc.isApproved"
-        :show-approve-button="project.permitApprove"
-        :total="docs.count"
-        class="d-none d-sm-block"
-        @click:clear-label="clear"
-        @click:review="approve"
+          :doc-id="doc.id"
+          :enable-auto-labeling.sync="enableAutoLabeling"
+          :guideline-text="project.guideline"
+          :is-reviewd="doc.isApproved"
+          :show-approve-button="project.permitApprove"
+          :total="docs.count"
+          class="d-none d-sm-block"
+          @click:clear-label="clear"
+          @click:review="approve"
       >
         <v-btn-toggle
-          v-model="labelOption"
-          mandatory
-          class="ms-2"
+            v-model="labelOption"
+            mandatory
+            class="ms-2"
         >
           <v-btn icon>
             <v-icon>mdi-format-list-bulleted</v-icon>
@@ -26,39 +26,47 @@
         </v-btn-toggle>
       </toolbar-laptop>
       <toolbar-mobile
-        :total="docs.count"
-        class="d-flex d-sm-none"
+          :total="docs.count"
+          class="d-flex d-sm-none"
       />
     </template>
     <template v-slot:content>
       <v-card
-        v-shortkey="shortKeys"
-        @shortkey="addOrRemove"
+          v-shortkey="shortKeys"
+          @shortkey="addOrRemove"
       >
         <v-card-title>
           <label-group
-            v-if="labelOption === 0"
-            :labels="labels"
-            :annotations="annotations"
-            :single-label="project.singleClassClassification"
-            @add="add"
-            @remove="remove"
+              v-if="labelOption === 0"
+              :labels="labels"
+              :annotations="annotations"
+              :single-label="project.singleClassClassification"
+              @add="add"
+              @remove="remove"
           />
           <label-select
-            v-else
-            :labels="labels"
-            :annotations="annotations"
-            :single-label="project.singleClassClassification"
-            @add="add"
-            @remove="remove"
+              v-else
+              :labels="labels"
+              :annotations="annotations"
+              :single-label="project.singleClassClassification"
+              @add="add"
+              @remove="remove"
           />
         </v-card-title>
-        <v-divider />
-        <v-card-text class="title highlight" v-text="doc.text" />
+        <v-divider/>
+        <v-card-text class="title highlight" v-text="doc.text"/>
+
       </v-card>
+
+      <preview-panel v-if="isPDF"
+                     :doc="doc"
+                     :metadata=JSON.parse(doc.meta)>
+      </preview-panel>
+
+
     </template>
     <template v-slot:sidebar>
-      <list-metadata :metadata="JSON.parse(doc.meta)" />
+      <list-metadata :metadata="JSON.parse(doc.meta)"/>
     </template>
   </layout-text>
 </template>
@@ -71,6 +79,7 @@ import LayoutText from '@/components/tasks/layout/LayoutText'
 import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
+import PreviewPanel from "@/components/tasks/textClassification/PreviewPanel";
 
 export default {
   layout: 'workspace',
@@ -81,16 +90,17 @@ export default {
     LayoutText,
     ListMetadata,
     ToolbarLaptop,
-    ToolbarMobile
+    ToolbarMobile,
+    PreviewPanel
   },
 
   async fetch() {
     this.docs = await this.$services.document.fetchOne(
-      this.projectId,
-      this.$route.query.page,
-      this.$route.query.q,
-      this.$route.query.isChecked,
-      this.project.filterOption
+        this.projectId,
+        this.$route.query.page,
+        this.$route.query.q,
+        this.$route.query.isChecked,
+        this.project.filterOption
     )
     const doc = this.docs.items[0]
     if (this.enableAutoLabeling) {
@@ -106,7 +116,7 @@ export default {
       labels: [],
       project: {},
       enableAutoLabeling: false,
-      labelOption: 0
+      labelOption: 0,
     }
   },
 
@@ -123,6 +133,12 @@ export default {
       } else {
         return this.docs.items[0]
       }
+    },
+    fileExt() {
+      return this.doc.text.split('.')[1]
+    },
+    isPDF() {
+      return this.fileExt === 'pdf'
     }
   },
 
@@ -185,7 +201,7 @@ export default {
     }
   },
 
-  validate({ params, query }) {
+  validate({params, query}) {
     return /^\d+$/.test(params.id) && /^\d+$/.test(query.page)
   }
 }

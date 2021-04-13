@@ -13,6 +13,7 @@ import UploadSequenceLabelingJSONL from '@/static/formats/sequence_labeling/uplo
 import UploadTextClassificationCSV from '@/static/formats/text_classification/upload/example.csv'
 import UploadTextClassificationJSONL from '@/static/formats/text_classification/upload/example.jsonl'
 import UploadTextClassificationFastText from '@/static/formats/text_classification/upload/fastText.txt'
+import UploadTextClassificationPDF from '@/static/formats/text_classification/upload/pdf_upload_text.txt'
 
 export class FormatItem {
   constructor(
@@ -30,6 +31,8 @@ const FastTextItem = (example: string) => { return new FormatItem(example, 'txt'
 const JSONLItem = (example: string) => { return new FormatItem(example, 'json', 'JSONL', 'jsonl') }
 const JSONLLabelItem = (example: string) => { return new FormatItem(example, 'json', 'JSONL(text label)', 'jsonl') }
 const PlainItem = (example: string) => { return new FormatItem(example, 'plain', 'Plain text', 'txt') }
+const PDFItem = (example: string) => { return new FormatItem(example, 'pdf', 'PDF', 'pdf')}
+
 
 export class FormatFactory {
   constructor(private projectType: string) {}
@@ -63,7 +66,8 @@ export class FormatFactory {
         CSVItem(UploadTextClassificationCSV),
         JSONLItem(UploadTextClassificationJSONL),
         ExcelItem(UploadTextClassificationCSV),
-        FastTextItem(UploadTextClassificationFastText)
+        FastTextItem(UploadTextClassificationFastText),
+        PDFItem(UploadTextClassificationPDF)
       ]
     } else if (this.projectType === 'SequenceLabeling') {
       return [

@@ -20,6 +20,9 @@ from django.contrib.auth.views import TemplateView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
 
 # TODO: adds AnnotationList and AnnotationDetail endpoint.
 schema_view = get_schema_view(
@@ -40,6 +43,9 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path('', TemplateView.as_view(template_name='index.html')),
 ]
+
+# to store pdf files in staticfiles folder
+urlpatterns += static(settings.STATICFILES_DIRS[0], document_root=settings.SITE_ROOT)
 
 if 'cloud_browser' in settings.INSTALLED_APPS:
     urlpatterns.append(path('cloud-storage/', include('cloud_browser.urls')))

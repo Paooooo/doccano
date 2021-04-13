@@ -6,6 +6,7 @@ import json
 import mimetypes
 import re
 from collections import defaultdict
+import uuid
 
 import conllu
 import pyexcel
@@ -463,6 +464,37 @@ class FastTextParser(FileParser):
         if data:
             yield data
 
+
+class PDFParser(FileParser):
+    """
+    Parses files in pdf format.
+    Returns the file name as text and file_path as meta
+    example :
+    ```
+    "text" : "sample.pdf",
+    "meta" : "{'file_path" : "frontend/static/pdf/sample.pdf"}"
+    ```
+    """
+    def parse(self, file):
+        yield [{
+            'text': file.name,
+            'meta': json.dumps({'file_path': self.generate_pdf_path(file)[-56:]})
+        }]
+
+
+    def generate_pdf_path(self, pdf_file):
+        """
+        Generate path to store pdf files in frontend static folder.
+        """
+        file_name = self.generate_random_file_name()
+        pdf_path = f'{settings.STATICFILES_DIRS[0]}/{file_name}'
+        return pdf_path
+
+    def generate_random_file_name(self):
+        """
+        generate random file name for pdf files
+        """
+        return uuid.uuid4().hex + '.pdf'
 
 
 class AudioParser(FileParser):
